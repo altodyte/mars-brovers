@@ -8,11 +8,9 @@ from flask import Flask, request
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
-#sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 sock.bind(("", UDP_PORT)) 
 app = Flask(__name__)
-
-#app.config['DEBUG'] = True
 
 @app.route('/Jefferson')
 def jefferson_send():
@@ -24,26 +22,32 @@ def jefferson_send():
     
     x = coordinates[0]
     y = coordinates[1]
-    print Waypoints
+
+    #This WaypointCount needs to be updated to receive live counts from the midbrain
+    #Need to set a limit on the WaypointCounter, otherwise will break when it excedes length
     WaypointCount = 0
 
-    #Will constantly be returning the Waypoint we are on, if cleared will increase
-    #by 1
+    #Will constantly be returning the Waypoint we are on, if cleared will increase by 1
     if x >= Waypoints[WaypointCount][0] - 5 and Waypoints[WaypointCount][0] + 5:
         if y >= Waypoints[WaypointCount][1] - 5 and Waypoints[WaypointCount][1] + 5:
             print "X passed, Y passed"
             WaypointCount = WaypointCount + 1
+            print WaypointCount
             return WaypointCount
         else:
-            "X passed, Y faild"
+            print "X passed, Y faild"
+            print WaypointCount
             return WaypointCount
     elif y >= Waypoints[i][1] - 5 and Waypoints[i][1] +5:
         print "X failed, Y Passed"
+        print WaypointCount
         return WaypointCount
     else:
-        "X failed, Y failed"
+        print "X failed, Y failed"
+        print WaypointCount
         return WaypointCount
 
+#Data Parsing
 def getSymbols(data):
 	syms = [];
 	for c in string.letters:
@@ -65,7 +69,6 @@ def getOurPosition(data):
 	return parseString(data,name)
 
 #http://<ip_address>:<Port>/Jefferson
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
