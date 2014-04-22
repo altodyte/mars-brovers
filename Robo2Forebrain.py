@@ -2,14 +2,14 @@ import time
 import string
 import socket
 from flask import Flask, request
-    
+
 #s = '$,R,10,100,G,500,1000,B,90,270,V,0,0,W,0,0,X,0,55,Y,0,0,Z,10,0,S,19,29,122\r'
 
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 
-sock.bind(("", UDP_PORT)) 
+sock.bind(("", UDP_PORT))
 app = Flask(__name__)
 
 @app.route('/Jefferson')
@@ -23,29 +23,25 @@ def jefferson_send():
     x = coordinates[0]
     y = coordinates[1]
 
-    #This WaypointCount needs to be updated to receive live counts from the midbrain
-    #Need to set a limit on the WaypointCounter, otherwise will break when it excedes length
-    WaypointCount = 0
-
-    #Will constantly be returning the Waypoint we are on, if cleared will increase by 1
-    if x >= Waypoints[WaypointCount][0] - 5 and Waypoints[WaypointCount][0] + 5:
-        if y >= Waypoints[WaypointCount][1] - 5 and Waypoints[WaypointCount][1] + 5:
+    #Calibration range for coordinates
+    variablex = 5
+    variabley = 5
+    
+    if x >= Waypoints[0][0] - variablex and Waypoints[0][0] + variablex:
+        if y >= Waypoints[0][1] - variabley and Waypoints[0][1] + variabley:
             print "X passed, Y passed"
-            WaypointCount = WaypointCount + 1
-            print WaypointCount
-            return WaypointCount
+            popped = Waypoints.pop(0)
+            print popped
+            return popped
         else:
             print "X passed, Y faild"
-            print WaypointCount
-            return WaypointCount
-    elif y >= Waypoints[i][1] - 5 and Waypoints[i][1] +5:
+            return WaypointCount[0]
+    elif y >= Waypoints[i][1] - variabley and Waypoints[i][1] + variabley:
         print "X failed, Y Passed"
-        print WaypointCount
-        return WaypointCount
+        return WaypointCount[0]
     else:
         print "X failed, Y failed"
-        print WaypointCount
-        return WaypointCount
+        return WaypointCount[0]
 
 #Data Parsing
 def getSymbols(data):
