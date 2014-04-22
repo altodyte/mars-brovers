@@ -18,16 +18,31 @@ app = Flask(__name__)
 def jefferson_send():
     data, addr = sock.recvfrom(1024)
     print "received message:", data
+
     coordinates = getOurPosition(data)
     Waypoints = getWayPoints(data)
-    '''print Waypoints
+    
     x = coordinates[0]
-    y = coordinates[1]'''
+    y = coordinates[1]
     print Waypoints
-    for i in range(len(Waypoints)):
-        WaypointsCheck = checkWaypoints(Waypoints[i],coordinates)
-        if WaypointsCheck == 1:
-            cleared = Waypoints.pop(i)
+    WaypointCount = 0
+
+    #Will constantly be returning the Waypoint we are on, if cleared will increase
+    #by 1
+    if x >= Waypoints[WaypointCount][0] - 5 and Waypoints[WaypointCount][0] + 5:
+        if y >= Waypoints[WaypointCount][1] - 5 and Waypoints[WaypointCount][1] + 5:
+            print "X passed, Y passed"
+            WaypointCount = WaypointCount + 1
+            return WaypointCount
+        else:
+            "X passed, Y faild"
+            return WaypointCount
+    elif y >= Waypoints[i][1] - 5 and Waypoints[i][1] +5:
+        print "X failed, Y Passed"
+        return WaypointCount
+    else:
+        "X failed, Y failed"
+        return WaypointCount
 
 def getSymbols(data):
 	syms = [];
@@ -48,22 +63,6 @@ def getWayPoints(data):
 def getOurPosition(data):
 	name = 'G'
 	return parseString(data,name)
-
-def checkWaypoints(Waypoint,Coordinates):
-        x = coordinates[0]
-        y = coordinates[1]
-        if x >= Waypoints[0] - 5 and Waypoints[0] + 5:
-            if y >= Waypoints[1] - 5 and Waypoints[1] + 5:
-                print "X passed, Y passed"
-                return 1
-            else:
-                "X passed, Y faild"
-                return 0
-        elif y >= Waypoints[1] - 5 and Waypoints[1] +5:
-            print "X failed, Y Passed"
-        else:
-            "X failed, Y failed"
-            return 0
 
 #http://<ip_address>:<Port>/Jefferson
 
